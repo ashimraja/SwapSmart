@@ -7,9 +7,9 @@ const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const {navigate} = useContext(ShopContext);
   return (
-    <div className='flex items-center justify-between py-5 font-sans'>
+    <div className='flex items-center justify-between py-5 font-sans px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       <Link to='/'><img className='w-36' alt="" /></Link>
-      <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
+      <ul className='hidden sm:flex gap-10 text-sm text-black font-bold'>
         <NavLink to='/' className='flex flex-col items-center gap-1' >
           <p>HOME</p>
         </NavLink>
@@ -19,9 +19,15 @@ const Navbar = () => {
         <NavLink to='/buy' className='flex flex-col items-center gap-1' >
           <p>BUY</p>
         </NavLink>
+        <NavLink to='/about' className='flex flex-col items-center gap-1' >
+          <p>ABOUT</p>
+        </NavLink>
+        <NavLink to='/contact' className='flex flex-col items-center gap-1' >
+          <p>CONTACT</p>
+        </NavLink>
       </ul>
       <ul>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 font-bold">
           <img className='w-5 cursor-pointer' src={assests.search_icon} alt="" />
           <div className='group relative'>
               <img src={assests.profile_icon} onClick={()=>navigate('/login')} className='w-5 cursor-pointer' alt="" />
