@@ -6,8 +6,12 @@ import menu_icon from './menu_icon.png'
 import about_img from './about_img.png'
 import contact_img from './contact_img.png'
 import cross_icon from './cross_icon.png'
+import sell_phone from './sell_phone.webp' 
+import buy_phone from './buy_phone.webp'
+import repair_phone from './repair_phone.webp'
+import find_new_phone from './find_new_phone.webp'
 
-export const assests = {
+export const assets = {
     cart_icon,
     dropdown_icon,
     profile_icon,
@@ -15,5 +19,9 @@ export const assests = {
     menu_icon,
     about_img,
     contact_img,
-    cross_icon
+    cross_icon,
+    sell_phone,
+    buy_phone,
+    repair_phone,
+    find_new_phone
 }

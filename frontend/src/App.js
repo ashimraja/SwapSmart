@@ -13,20 +13,18 @@ function App() {
   return (
     <div >
       <ToastContainer/>
-      <div className="sticky border-b border-transparent shadow-lg">
         <Navbar/>
-      </div>
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/buy" element={<Buy />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/logn" element={<Login />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/buy" element={<Buy />} />
+          <Route path="/sell" element={<Sell />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+        <Footer/>
       </div>
-      <Footer/>
     </div>
   );
 }
