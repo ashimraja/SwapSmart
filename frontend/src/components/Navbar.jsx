@@ -10,7 +10,7 @@ const Navbar = () => {
     <div className='sticky top-0 z-50 border-b border-transparent shadow-lg bg-white'>
       <div className='flex items-center justify-between py-5 font-sans px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
         <Link to='/'><img className='w-36' alt="" /></Link>
-        <ul className='hidden sm:flex gap-10 text-sm text-black font-bold'>
+        <ul className='hidden sm:flex gap-10 text-sm text-black font-semibold'>
           <NavLink to='/' className='flex flex-col items-center gap-1' >
             <p>HOME</p>
           </NavLink>
@@ -54,7 +54,8 @@ const Navbar = () => {
                 <p>Back</p>
               </div>
               <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to='/'>HOME</NavLink>
-              <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to='/collection'>COLLECTION</NavLink>
+              <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to='/buy'>BUY</NavLink>
+              <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to='/sell'>SELL</NavLink>
               <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to='/about'>ABOUT</NavLink>
               <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to='/contact'>Contact</NavLink>
             </div>

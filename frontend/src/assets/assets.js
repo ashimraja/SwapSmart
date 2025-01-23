@@ -10,6 +10,7 @@ import sell_phone from './sell_phone.webp'
 import buy_phone from './buy_phone.webp'
 import repair_phone from './repair_phone.webp'
 import find_new_phone from './find_new_phone.webp'
+import iphone from './iphone.jpg'
 
 export const assets = {
     cart_icon,
@@ -23,5 +24,6 @@ export const assets = {
     sell_phone,
     buy_phone,
     repair_phone,
-    find_new_phone
+    find_new_phone, 
+    iphone
 }
