@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const ProductItem = ({id, image ,name ,price}) => {
   return (
-    <Link className='cursor-pointer' to={`/buy/${id}`}>
+    <Link className='cursor-pointer' to={`/buy/product/${id}`}>
       <div className='border border-gray-400 p-2 rounded-md'>
         <img src={image} alt="" />
         <p>Rs 42000 OFF</p>
