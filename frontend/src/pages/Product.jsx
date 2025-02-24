@@ -1,12 +1,19 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { assets } from '../assets/assets'
-import RelatedProducts from './RelatedProducts'
+import RelatedProducts from '../components/RelatedProducts'
+import { useParams } from 'react-router-dom';
+import { ShopContext } from '../context/ShopContext';
 
 const Product = () => {
-    const [size, setSize] = useState('')
-    const [image,setImage] = useState('')
+
+  const {productId}=useParams();
+
+  const [image,setImage] = useState(assets.iphone)
+
+  const { currency, addToCart}=useContext(ShopContext)
+
   return (
-    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
+    <div className='pt-10 transition-opacity ease-in duration-500 opacity-100'>
       {/* Product Data */}
       <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
         {/* Product Image */}
@@ -34,17 +41,11 @@ const Product = () => {
           </div>
           <p className='mt-5 text-3xl font-medium'>Rs 47000</p>
           <p className='mt-5 text-gray-500 md:w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum labore animi aut ratione possimus ducimus ab quo quos, qui, beatae impedit dolorem molestias numquam in dolore fugiat temporibus vitae maxime?</p>
-          <div className="flex flex-col gap-4 my-8">
-            <p>Select Size</p>
-            <div className="flex gap-2">
-                <button onClick={()=>setSize('S')} className={`border py-2 px-4 bg-gray-100 ${size === "S" ?'border-orange-500' : ''}`} >S</button>
-                <button onClick={()=>setSize('M')} className={`border py-2 px-4 bg-gray-100 ${size === "M" ?'border-orange-500' : ''}`} >M</button>
-                <button onClick={()=>setSize('L')} className={`border py-2 px-4 bg-gray-100 ${size === "L" ?'border-orange-500' : ''}`} >L</button>
-                <button onClick={()=>setSize('XL')} className={`border py-2 px-4 bg-gray-100 ${size === "XL" ?'border-orange-500' : ''}`} >XL</button>
-            </div>
+          <div className='flex flex-row gap-4'>
+            <button className='bg-black text-white my-4 px-8 py-3 text-sm active:bg-gray-700'>BUY NOW</button>
+            <button onClick={()=>addToCart(productId)} className='bg-black text-white my-4 px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
           </div>
-          <button className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
-          <hr className='mt-8 sm:w-4/5'/>
+          <hr className='mt-5 sm:w-4/5'/>
           <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
             <p>100% Trusted Website.</p>
             <p>Cash on delivery is available for this product</p>

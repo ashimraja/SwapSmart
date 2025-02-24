@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const ProductCard = ({ id, image, name, price }) => {
   return (
-    <Link className="cursor-pointer" to={`/buy/product/${id}`}>
+    <Link className="cursor-pointer" to={`/product/${id}`}>
       <div className="border border-gray-200 shadow-sm flex flex-col sm:flex-row gap-3 sm:gap-5 rounded-sm p-4 items-center">
         <img
           src={image}
