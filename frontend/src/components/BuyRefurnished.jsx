@@ -19,8 +19,8 @@ const BuyRefurnished = () => {
   )
 }
 
-//
-//
-// 
+//dfgs
+//sdfgsdfg
+// dfgsdg
 
 export default BuyRefurnished 
