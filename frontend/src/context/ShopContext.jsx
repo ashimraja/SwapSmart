@@ -14,19 +14,18 @@ const ShopContextProvider = (props) => {
     const addToCart = async (itemId)=>{
 
         let cartData = cartItems;
-        if(cartData.contains(itemId)){
+        if(cartData.includes(itemId)){
             toast.error('Item Already in Cart')
         }
         else{
-            cartData.push(itemId);
+            setCartItems((prevCart) => [...prevCart, itemId]); 
+            toast.success('Item Added to Cart');
         }
-        setCartItems(cartData);   
-        console.log(cartItems);
-         
     }
     const getCartCount = ()=>{
-        let totalCount = 0;
-        return totalCount;
+        console.log(cartItems.length);
+        
+        return cartItems.length;
     }
 
 
