@@ -15,6 +15,8 @@ import star_icon from './star_icon.png'
 import iphone2 from './iphone2.jpg'
 import iphone3 from './iphone3.jpg'
 import iphone4 from './iphone4.jpg'
+import stripe_logo from './stripe_logo.png'
+import razorpay_logo from './razorpay_logo.png'
 
 export const assets = {
     cart_icon,
@@ -33,5 +35,7 @@ export const assets = {
     star_icon,
     iphone2,
     iphone3,
-    iphone4
+    iphone4,
+    stripe_logo,
+    razorpay_logo
 }

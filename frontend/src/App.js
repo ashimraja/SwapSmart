@@ -10,6 +10,9 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import Product from "./pages/Product";
 import { useEffect } from "react";
+import Cart from "./pages/Cart";
+import PlaceOrder from "./pages/PlaceOrder";
+import Order from "./pages/Order";
 
 function App() {
   const location = useLocation();
@@ -28,9 +31,11 @@ function App() {
           <Route path="/sell" element={<Sell />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/cart" element={<About />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/place-order" element={<PlaceOrder />} />
           <Route path="/product/:productId" element={<Product />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/orders" element={<Order />} />
         </Routes>
         <Footer/>
       </div>

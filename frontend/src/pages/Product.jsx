@@ -7,7 +7,7 @@ import { ShopContext } from '../context/ShopContext';
 const Product = () => {
   const { productId } = useParams();
   const [image, setImage] = useState(assets.iphone);
-  const { currency, addToCart } = useContext(ShopContext);
+  const { currency, addToCart, navigate } = useContext(ShopContext);
 
   return (
     <div className='pt-10 transition-opacity duration-500 ease-in opacity-100'>
@@ -37,13 +37,13 @@ const Product = () => {
             {[...Array(4)].map((_, i) => (
               <img key={i} src={assets.star_icon} alt='Star' className='w-3' />
             ))}
-            <img src={assets.star_dull_icon} alt='Star' className='w-3' />
+            <img src={assets.star_icon} alt='Star' className='w-3' />
             <p className='pl-2'>(122)</p>
           </div>
           <p className='mt-5 text-3xl font-medium'>Rs 47,000</p>
           <p className='mt-5 text-gray-500 md:w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum labore animi aut ratione possimus ducimus ab quo quos, qui, beatae impedit dolorem molestias numquam in dolore fugiat temporibus vitae maxime?</p>
           <div className='flex flex-row gap-4'>
-            <button className='px-8 py-3 my-4 text-sm text-white bg-black active:bg-gray-700'>BUY NOW</button>
+            <button onClick={()=>navigate('/place-order')} className='px-8 py-3 my-4 text-sm text-white bg-black active:bg-gray-700'>BUY NOW</button>
             <button
               onClick={() => addToCart(productId)}
               className='px-8 py-3 my-4 text-sm text-white bg-black active:bg-gray-700'
