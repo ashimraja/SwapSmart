@@ -18,6 +18,7 @@ const ProductCard = ({ id, image, name, price }) => {
             <div className="text-white bg-blue-900 px-2 py-1 text-sm rounded-sm">
               Republic Day Sale
             </div>
+            
             <div className="border rounded-sm px-2 py-1 text-sm">4.8</div>
           </div>
 
