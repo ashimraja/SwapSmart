@@ -7,6 +7,7 @@ import connectDb from './config/pg.js';  // Import PostgreSQL connection
 const app = express();
 const port = process.env.PORT || 4000;
 
+
 // Connect to PostgreSQL
 connectDb();  // Establish PostgreSQL connection
 
