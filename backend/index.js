@@ -10,6 +10,13 @@ import orderRoutes from './routes/orderRoutes.js';
 const app = express();
 const port = process.env.PORT || 4000;
 
+<<<<<<< HEAD
+=======
+
+// Connect to PostgreSQL
+connectDb();  // Establish PostgreSQL connection
+
+>>>>>>> 6f6ce1cef1c463d393e8e5c16b7fcf1c4e2301f1
 // Middlewares
 app.use(express.json());
 app.use(cors());
