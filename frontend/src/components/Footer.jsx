@@ -8,7 +8,7 @@ const Footer = () => {
         <div>
           {/* <img src="" className='mb-5 w-32' alt="" /> logo */}
           <p className='w-full md:w-2/3 text-gray-600'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam expedita ducimus rerum molestias iure, recusandae explicabo reiciendis eaque quasi error similique accusamus maiores harum sunt aut soluta nemo. Voluptatibus, natus!
+          At <strong>SwapSmart</strong>, we make it easier for you to buy and sell smartphones at the best prices. Trusted by thousands, we’re committed to fast delivery, secure transactions, and top-notch support. Your smart swap starts here!
           </p>
         </div>
 

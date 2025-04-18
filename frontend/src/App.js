@@ -13,12 +13,13 @@ import { useEffect } from "react";
 import Cart from "./pages/Cart";
 import PlaceOrder from "./pages/PlaceOrder";
 import Order from "./pages/Order";
+import Verify from "./pages/Verify";
 
 function App() {
   const location = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to the top of the page on route change
+    window.scrollTo(0, 0); 
   }, [location.pathname]);
   return (
     <div >
@@ -32,10 +33,11 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/place-order" element={<PlaceOrder />} />
+          <Route path="/place-order/:productId" element={<PlaceOrder />} />
           <Route path="/product/:productId" element={<Product />} />
           <Route path="/login" element={<Login />} />
           <Route path="/orders" element={<Order />} />
+          <Route path='/verify' element={<Verify/>}/>
         </Routes>
         <Footer/>
       </div>
