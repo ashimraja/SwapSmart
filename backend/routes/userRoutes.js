@@ -69,4 +69,39 @@ userRoutes.post('/login', async (req, res) => {
   }
 });
 
+userRoutes.post('/admin', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      const adminIdentifier = email + password;
+      const token = jwt.sign(
+        { 
+          adminIdentifier,  // This matches what your middleware checks for
+          role: 'admin'     // Good practice to include role
+        }, 
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }  // Add expiration
+      );
+      
+      return res.json({ 
+        success: true, 
+        token,
+        message: 'Admin login successful'
+      });
+    } else {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid admin credentials' 
+      });
+    }
+  } catch (error) {
+    console.error('Admin login error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+});
 export default userRoutes;

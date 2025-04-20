@@ -260,7 +260,7 @@ orderRoutes.get('/list', adminAuth, async (req, res) => {
       FROM orders o
       JOIN users u ON o.user_id = u.id
       JOIN phones_for_sale p ON o.product_id = p.id
-      JOIN users seller ON p.sold_user_id = seller.id
+      JOIN users seller ON p.sold_by_user_id = seller.id
       ORDER BY o.created_at DESC
     `);
     
@@ -331,6 +331,7 @@ orderRoutes.get('/sellerorders', auth, async (req, res) => {
   }
 });
 
+
 // UPDATE ORDER STATUS (ADMIN ONLY)
 orderRoutes.put('/status', adminAuth, async (req, res) => {
   try {
@@ -361,6 +362,67 @@ orderRoutes.put('/status', adminAuth, async (req, res) => {
       message: 'Failed to update status',
       error: error.message 
     });
+  }
+});
+
+// UPDATE ORDER STATUS
+orderRoutes.put('/status', auth, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const { orderId, status } = req.body;
+    
+    // First verify the user has permission to update this order
+    // (either admin or the seller of the product)
+    const orderCheck = await client.query(
+      `SELECT o.id, p.sold_by_user_id 
+       FROM orders o
+       JOIN phones_for_sale p ON o.product_id = p.id
+       WHERE o.id = $1`,
+      [orderId]
+    );
+
+    if (orderCheck.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found' 
+      });
+    }
+
+    // Check if user is admin OR the seller of this product
+    const isAdmin = req.user.role === 'admin';
+    const isSeller = orderCheck.rows[0].sold_by_user_id === req.user.id;
+    
+    if (!isAdmin && !isSeller) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Unauthorized to update this order status' 
+      });
+    }
+
+    // Update the status
+    const updatedOrder = await client.query(
+      `UPDATE orders 
+       SET status = $1, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2 
+       RETURNING *`,
+      [status, orderId]
+    );
+
+    res.json({ 
+      success: true, 
+      message: 'Status updated successfully',
+      order: updatedOrder.rows[0] 
+    });
+
+  } catch (error) {
+    console.error('Status Update Error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update status',
+      error: error.message 
+    });
+  } finally {
+    client.release();
   }
 });
 

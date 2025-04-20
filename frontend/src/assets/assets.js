@@ -17,6 +17,7 @@ import iphone3 from './iphone3.jpg'
 import iphone4 from './iphone4.jpg'
 import stripe_logo from './stripe_logo.png'
 import razorpay_logo from './razorpay_logo.png'
+import swapsmart from './swapsmart.png'
 
 export const assets = {
     cart_icon,
@@ -37,5 +38,6 @@ export const assets = {
     iphone3,
     iphone4,
     stripe_logo,
-    razorpay_logo
+    razorpay_logo,
+    swapsmart
 }

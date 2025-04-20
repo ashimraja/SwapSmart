@@ -10,7 +10,7 @@ const Navbar = () => {
   return (
     <div className='sticky top-0 z-50 border-b border-transparent shadow-lg bg-white'>
       <div className='flex items-center justify-between py-5 font-sans px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
-        <Link to='/'><img className='w-36' alt="" /></Link>
+        <Link to='/'><img src={assets.swapsmart} className='w-14 h-14 rounded-full' alt="" /></Link>
         <ul className='hidden sm:flex gap-10 text-sm text-black font-semibold'>
           <NavLink to='/' className='flex flex-col items-center gap-1'>
             <p>HOME</p>

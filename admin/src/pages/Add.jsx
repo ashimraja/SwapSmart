@@ -1,155 +1,402 @@
-import React, { useState } from 'react'
-import { assets } from '../assets/assets'
-import axios from 'axios'
-import { backendUrl } from '../App'
-import { toast } from 'react-toastify'
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { backendUrl } from '../App';
+import { assets } from '../assets/assets';
 
-const Add = ({token}) => {
-  const [image1,setImage1] = useState(false)
-  const [image2,setImage2] = useState(false)
-  const [image3,setImage3] = useState(false)
-  const [image4,setImage4] = useState(false)
+const AdminAddPhone = ({ token }) => {
+  const [formData, setFormData] = useState({
+    brand: '',
+    phoneName: '',
+    model: '',
+    price: '',
+    firstHandPrice: '',
+    description: '',
+    ram: '',
+    rom: '',
+    city: '',
+    state: '',
+    zipcode: '',
+    country: '',
+    phone: '',
+    isAvailable: true,
+    userId:''
+  });
 
-  const [name, setName] = useState("");
-  const [description,setDescription] = useState('');
-  const [price, setPrice] = useState("");
-  const [category, setCategory]= useState("Men");
-  const [subCategory, setSubCategory] = useState("Topwear");
-  const [bestseller, setBestseller]=useState(false);
-  const [sizes, setSizes] =useState([]);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const onSubmitHandler= async(e)=>{
-    e.preventDefault();
-    try{
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files).slice(0, 4);
+    const newImages = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setImages([...images, ...newImages].slice(0, 4));
+  };
+
+  const removeImage = (index) => {
+    const newImages = [...images];
+    URL.revokeObjectURL(newImages[index].preview);
+    newImages.splice(index, 1);
+    setImages(newImages);
+  };
+
+  const uploadToCloudinary = async () => {
+    const uploadedUrls = [];
+    
+    for (const img of images) {
       const formData = new FormData();
-
-      formData.append("name", name)
-      formData.append("description", description)
-      formData.append("price", price)
-      formData.append("category", category)
-      formData.append("subCategory", subCategory)
-      formData.append("bestseller",bestseller)
-      formData.append("sizes", JSON.stringify(sizes))
-
-      image1 && formData.append('image1',image1)
-      image2 && formData.append('image2',image2)
-      image3 && formData.append('image3',image3)
-      image4 && formData.append('image4',image4)
-
-      const response = await axios.post(backendUrl+'/api/product/add',formData,{headers:{token}})
-      if(response.data.success){
-        toast.success(response.data.message);
-        setName('')
-        setDescription('')
-        setPrice('')
-        setImage1(false)
-        setImage2(false)
-        setImage3(false)
-        setImage4(false)
-      } else{
-        toast.error(response.data.message)
-      }
-    } catch(error){
-      console.log(error);
-      toast.error(error.message)
+      formData.append("file", img.file);
+      formData.append("upload_preset", "phone_upload_preset");
       
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/dekchfnsk/image/upload",
+          formData
+        );
+        uploadedUrls.push(res.data.secure_url);
+      } catch (error) {
+        console.error("Upload error:", error);
+        throw error;
+      }
     }
-  }
+    
+    return uploadedUrls;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (images.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const imageUrls = await uploadToCloudinary();
+      
+      const phoneData = {
+        ...formData,
+        images: imageUrls,
+        isAvailable: formData.isAvailable,
+      };
+
+      const response = await axios.post("http://localhost:4000/api/phones", phoneData);
+
+      if (response.data.success) {
+        toast.success("Phone added successfully!");
+        // Reset form
+        setFormData({
+          brand: '',
+          phoneName: '',
+          model: '',
+          price: '',
+          firstHandPrice: '',
+          description: '',
+          ram: '',
+          rom: '',
+          city: '',
+          state: '',
+          zipcode: '',
+          country: '',
+          phone: '',
+          isAvailable: true
+        });
+        setImages([]);
+      } else {
+        throw new Error(response.data.message || "Failed to add phone");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      console.error("Add phone error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
-      <div>
-        <p className='mb-2'>Upload Image</p>
-        <div className='flex gap-2'>
-          <label htmlFor="image1">
-            <img className='w-20' src={!image1 ? assets.upload_area: URL.createObjectURL(image1)} alt="" />
-            <input onChange={(e)=>setImage1(e.target.files[0])} type="file" id="image1" hidden/>
-          </label>
-          <label htmlFor="image2">
-            <img className='w-20' src={!image2 ? assets.upload_area: URL.createObjectURL(image2)} alt="" />
-            <input onChange={(e)=>setImage2(e.target.files[0])} type="file" id="image2" hidden/>
-          </label>
-          <label htmlFor="image3">
-            <img className='w-20' src={!image3 ? assets.upload_area: URL.createObjectURL(image3)} alt="" />
-            <input onChange={(e)=>setImage3(e.target.files[0])} type="file" id="image3" hidden/>
-          </label>
-          <label htmlFor="image4">
-            <img className='w-20' src={!image4 ? assets.upload_area: URL.createObjectURL(image4)} alt="" />
-            <input onChange={(e)=>setImage4(e.target.files[0])} type="file" id="image4" hidden/>
-          </label>
-        </div>
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Product Name</p>
-        <input onChange={(e)=>setName(e.target.value)} value={name} className='w-full max-w-[500px] px-3 py-2' type="text" placeholder='Type here' required/>
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Product Description</p>
-        <textarea onChange={(e)=>setDescription(e.target.value)} value={description} className='w-full max-w-[500px] px-3 py-2' type='text' placeholder='Write content here' required/>
-      </div>
-
-      <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
-
+    <div className="p-4 max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold mb-6">Add New Phone (Admin)</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Brand Selection */}
         <div>
-          <p className='mb-2'>Product category</p>
-          <select onChange={(e)=>setCategory(e.target.value)} className='w-full px-3 py-2' >
-            <option value="Men">Men</option>
-            <option value="Women">Women</option>
-            <option value="Kids">Kids</option>
+          <label className="block mb-2 font-medium">Brand</label>
+          <select
+            name="brand"
+            value={formData.brand}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="">Select Brand</option>
+            <option value="Apple">Apple</option>
+            <option value="Samsung">Samsung</option>
+            <option value="Xiaomi">Xiaomi</option>
+            <option value="OnePlus">OnePlus</option>
+            <option value="Google">Google</option>
+            <option value="Other">Other</option>
           </select>
+          {formData.brand === "Other" && (
+            <input
+              type="text"
+              name="brand"
+              placeholder="Specify Brand"
+              className="w-full p-2 border rounded mt-2"
+              value={formData.brand}
+              onChange={handleChange}
+              required
+            />
+          )}
         </div>
 
+        {/* Phone Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">Phone Name</label>
+            <input
+              type="text"
+              name="phoneName"
+              value={formData.phoneName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. iPhone 15 Pro"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">Model</label>
+            <input
+              type="text"
+              name="model"
+              value={formData.model}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. A2849"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">Price (Rs)</label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. 999"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">Original Price (Rs)</label>
+            <input
+              type="number"
+              name="firstHandPrice"
+              value={formData.firstHandPrice}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. 1099"
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">RAM (GB)</label>
+            <input
+              type="number"
+              name="ram"
+              value={formData.ram}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. 8"
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">Storage (GB)</label>
+            <input
+              type="number"
+              name="rom"
+              value={formData.rom}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. 256"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
         <div>
-          <p className='mb-2'>Sub category</p>
-          <select onChange={(e)=>setSubCategory(e.target.value)} className='w-full px-3 py-2' >
-            <option value="Topwear">Topwear</option>
-            <option value="Bottomwear">Bottomwear</option>
-            <option value="Winterwear">Winterwear</option>
-          </select>
+          <label className="block mb-2 font-medium">Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            rows="4"
+            placeholder="Detailed description of the phone..."
+          ></textarea>
         </div>
 
+        {/* Location Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">City</label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. New York"
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">State</label>
+            <input
+              type="text"
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. NY"
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">Zipcode</label>
+            <input
+              type="text"
+              name="zipcode"
+              value={formData.zipcode}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. 10001"
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 font-medium">Country</label>
+            <input
+              type="text"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. USA"
+            />
+          </div>
+        </div>
+
+        {/* Contact Phone */}
         <div>
-          <p className='mb-2'>Product Price</p>
-          <input onChange={(e)=>setPrice(e.target.value)} value={price} className='w-full px-3 py-2 sm:w-[120px]'  type="number" placeholder='25' />
+          <label className="block mb-2 font-medium">Contact Number</label>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            placeholder="e.g. +1234567890"
+          />
         </div>
-      </div>
 
-      <div>
-        <p className='mb-2'>Product Sizes </p>
-        <div className='flex gap-3'>
-
-          <div onClick={()=>setSizes(prev=>prev.includes('S')?prev.filter(item=>item !=="S"):[...prev,'S'])}>
-            <p className={`${sizes.includes('S')? 'bg-pink-100':'bg-slate-200'} px-3 py-1 cursor-pointer`}>S</p>
+        {/* Availability */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <input
+              type="checkbox"
+              id="isAvailable"
+              name="isAvailable"
+              checked={formData.isAvailable}
+              onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
+              className="mr-2"
+            />
+            <label htmlFor="isAvailable" className="block mb-2 font-medium">
+              Available for sale
+            </label>
           </div>
 
-          <div onClick={()=>setSizes(prev=>prev.includes('M')?prev.filter(item=>item !=="M"):[...prev,'M'])}>
-            <p className={`${sizes.includes('M')? 'bg-pink-100':'bg-slate-200'} px-3 py-1 cursor-pointer`}>M</p>
+          <div>
+            <label className="block mb-2 font-medium">Sold By</label>
+            <input
+              type="number"
+              name="userId"
+              value={formData.userId}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="e.g. 8"
+            />
           </div>
+          
+        </div>
+        
 
-          <div onClick={()=>setSizes(prev=>prev.includes('L')?prev.filter(item=>item !=="L"):[...prev,'L'])}>
-            <p className={`${sizes.includes('L')? 'bg-pink-100':'bg-slate-200'} px-3 py-1 cursor-pointer`}>L</p>
-          </div>
-
-          <div onClick={()=>setSizes(prev=>prev.includes('XL')?prev.filter(item=>item !=="XL"):[...prev,'XL'])}>
-            <p className={`${sizes.includes('XL')? 'bg-pink-100':'bg-slate-200'} px-3 py-1 cursor-pointer`}>XL</p>
-          </div>
-
-          <div onClick={()=>setSizes(prev=>prev.includes('XXL')?prev.filter(item=>item !=="XXL"):[...prev,'XXL'])}>
-            <p className={`${sizes.includes('XXL')? 'bg-pink-100':'bg-slate-200'} px-3 py-1 cursor-pointer`}>XXL</p>
+        {/* Image Upload */}
+        <div>
+          <label className="block mb-2 font-medium">Images (Max 4)</label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="w-full p-2 border rounded"
+            disabled={images.length >= 4 || loading}
+          />
+          
+          {/* Image Previews */}
+          <div className="flex flex-wrap gap-4 mt-4">
+            {images.length > 0 ? (
+              images.map((img, index) => (
+                <div key={index} className="relative">
+                  <img 
+                    src={img.preview} 
+                    alt={`Preview ${index}`}
+                    className="h-24 w-24 object-cover rounded border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="flex gap-4">
+                {[1, 2, 3, 4].map((item) => (
+                  <div key={item} className="h-24 w-24 border-2 border-dashed rounded flex items-center justify-center">
+                    <img src={assets.upload_area} alt="Upload area" className="w-12 opacity-50" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </div>
 
-      <div className='flex gap-2 mt-2'>
-        <input onChange={()=>setBestseller(prev=>!prev)} checked={bestseller} type="checkbox" id='bestSeller' />
-        <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
-      </div>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-3 bg-black text-white rounded hover:bg-gray-800 disabled:opacity-50"
+        >
+          {loading ? 'Adding Phone...' : 'Add Phone'}
+        </button>
+      </form>
+    </div>
+  );
+};
 
-      <button type='submit' className='w-28 mt-4 py-3 bg-black text-white'>ADD</button>
-    </form>
-  )
-}
-
-export default Add
+export default AdminAddPhone;

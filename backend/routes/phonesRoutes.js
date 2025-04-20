@@ -1,5 +1,6 @@
 import express from 'express';
 import pool from '../config/db.js';
+import adminAuth from '../middleware/adminAuth.js';
 
 const phoneRoutes = express.Router();
 
@@ -114,6 +115,53 @@ phoneRoutes.get('/', async (req, res) => {
   }
 });
 
+// Get all phones (admin only)
+phoneRoutes.get('/all-phones', adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT p.*, 
+              u.name as seller_name,
+              u.email as seller_email
+       FROM phones_for_sale p
+       JOIN users u ON p.sold_by_user_id = u.id
+       ORDER BY p.created_at DESC`
+    );
+
+    const phones = result.rows.map((row) => ({
+      id: row.id,
+      brand: row.brand,
+      phoneName: row.phone_name,
+      model: row.model,
+      price: row.price,
+      firstHandPrice: row.first_hand_price,
+      description: row.description,
+      ram: row.ram,
+      rom: row.rom,
+      city: row.city,
+      state: row.state,
+      zipcode: row.zipcode,
+      country: row.country,
+      phone: row.phone,
+      images: row.image,
+      isAvailable: row.is_available,
+      sellerInfo: {
+        name: row.seller_name,
+        email: row.seller_email
+      },
+      createdAt: row.created_at
+    }));
+
+    res.json({ success: true, phones });
+  } catch (error) {
+    console.error('Admin phones error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch phones',
+      error: error.message
+    });
+  }
+});
+
 // Get phone by ID
 phoneRoutes.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -157,5 +205,41 @@ phoneRoutes.get('/:id', async (req, res) => {
     });
   }
 });
+
+// Toggle phone availability (admin only)
+phoneRoutes.post('/toggleavailability', adminAuth, async (req, res) => {
+  try {
+    const { phoneId } = req.body;
+    const result = await pool.query(
+      `UPDATE phones_for_sale 
+       SET is_available = NOT is_available 
+       WHERE id = $1 
+       RETURNING *`,
+      [phoneId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Phone not found' 
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Availability updated',
+      phone: result.rows[0] 
+    });
+  } catch (error) {
+    console.error('Toggle availability error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update availability',
+      error: error.message
+    });
+  }
+});
+
+
 
 export default phoneRoutes;
